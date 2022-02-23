@@ -20,7 +20,7 @@ namespace Challenge1.Contexts
 
 
 
-        public DbSet<Genero> Generos { get; set; } = null!;
+        public DbSet<Genero> Generos { get; set; } = null!; // <clase> Nombre - lo que solicites de la base de datos retorna como lo tengas modelado
         public DbSet<Pelicula> Peliculas { get; set; } = null!;
         public DbSet<Personaje> Personajes { get; set; } = null!;
 

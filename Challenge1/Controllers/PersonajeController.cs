@@ -13,7 +13,7 @@ namespace Challenge1.Controllers
     //le permite servir a los tipos derivados las respuestas HTTP (VERBOS)
 
 
-    [Route("api/[controller]")]
+    [Route("api/characters")]
     //describe la ruta por la que accederemos a los recursos o acciones de nuestra API.
 
     public class PersonajeController : ControllerBase //ControllerBase: La class GeneroController usará funcionalidades MVC
@@ -30,12 +30,49 @@ namespace Challenge1.Controllers
             return Ok(_context.Generos.ToList());
         }
 
-        [HttpPost]
+        [HttpPost] //publica nuevo personaje
         public IActionResult Post(Personaje personaje)
         {
             _context.Personajes.Add(personaje);
             _context.SaveChanges();
-            return Ok(_context.Personajes.ToList());
+            //return Ok(_context.Personajes.ToList()); // retorna todos los personajes
+            return CreatedAtAction("Get", new { id = personaje.Id }, personaje); // retorna el personaje
         }
+
+        // Borrar personaje
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            Personaje personaje = _context.Personajes.Find(id);
+
+            if (personaje == null) // null es que NO existe, o sea, que personaje es null 
+            {
+                return NotFound(); // retorna no encontrado
+            }
+
+            // si lo encontro, sigue..
+            _context.Personajes.Remove(personaje); // primero remueve
+            _context.SaveChanges(); // despues guardas
+
+            return NoContent(); // podes retornar nada, la lista de personajes
+        }
+
+        // buscar personaje por pelicula
+        [HttpGet]
+        public IActionResult GetCharacterByAge(int edad) // edad 50
+        {
+            List<Personaje> personajes = _context.Personajes.Where(p => p.Edad == edad).ToList();
+            // personaje1 tioene 30 = 50? NO, no lo agrega
+            //personaje1 tiene 50 = 50 ? SI, entonces lo agrega
+
+            if (personajes.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return (IActionResult)personajes; // ver con Action Lista, por ahora se castea para que no de error
+        }
+
+        // para modificar es similar, pero es con PUT, no con GET
     }
 }
